@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adoption Application | Shelter Inventory System</title>
+    <link rel="stylesheet" href="adoption-form.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-container">
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="/pets">Pets</a></li>
+            <li><a href="/adoptions" class="active">Adoptions</a></li>
+            <li><a href="/treatments">Treatments</a></li>
+            <li><a href="/about">About</a></li>
+        </ul>
+    </div>
+</nav>
+
+<main>
+    <div class="container">
+        <h1 class="form-title">Apply for Adoption</h1>
+
+        <form class="adoption-form" id="adoptionForm">
+            <div class="form-group">
+                <label for="adopterName">Full Name</label>
+                <input type="text" id="adopterName" name="adopterName" required>
+            </div>
+
+            <div class="form-group">
+                <label for="adopterEmail">Email</label>
+                <input type="email" id="adopterEmail" name="adopterEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="adopterPhone">Phone Number</label>
+                <input type="tel" id="adopterPhone" name="adopterPhone" required>
+            </div>
+
+            <div class="form-group">
+                <label for="adopterAddress">Address</label>
+                <textarea id="adopterAddress" name="adopterAddress" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="preferredPet">Preferred Pet Name (Optional)</label>
+                <input type="text" id="preferredPet" name="preferredPet">
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Application</button>
+        </form>
+    </div>
+</main>
+
+<script src="adoption_form.js"></script>
+</body>
+</html>

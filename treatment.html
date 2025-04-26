@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pet Treatments | Shelter Inventory System</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <ul class="nav-links">
+                <li><a href="/">Home</a></li>
+                <li><a href="/pets">Pets</a></li>
+                <li><a href="/adoptions">Adoptions</a></li>
+                <li><a href="/treatments" class="active">Treatments</a></li>
+                <li><a href="/about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <main>
+        <div class="container">
+            <h1 class="page-title">Pet Treatments</h1>
+
+            <!-- Add Treatment Form -->
+            <section class="add-treatment-section">
+                <h2>Add New Treatment</h2>
+                <form id="treatmentForm" class="treatment-form">
+                    <div class="form-group">
+                        <label for="petName">Pet Name</label>
+                        <select id="petName" name="petName" required>
+                            <option value="">Select a pet</option>
+                            <option value="Buddy">Buddy</option>
+                            <option value="Luna">Luna</option>
+                            <option value="Max">Max</option>
+                            <option value="Bella">Bella</option>
+                            <option value="Charlie">Charlie</option>
+                            <option value="Daisy">Daisy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="treatmentType">Treatment Type</label>
+                        <select id="treatmentType" name="treatmentType" required>
+                            <option value="">Select treatment type</option>
+                            <option value="Vaccination">Vaccination</option>
+                            <option value="Surgery">Surgery</option>
+                            <option value="Deworming">Deworming</option>
+                            <option value="Check-up">Check-up</option>
+                            <option value="Medication">Medication</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="treatmentDate">Date of Treatment</label>
+                        <input type="date" id="treatmentDate" name="treatmentDate" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="notes">Notes</label>
+                        <textarea id="notes" name="notes" rows="3" placeholder="Enter any additional notes..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Add Treatment</button>
+                </form>
+            </section>
+
+            <!-- Treatments Table -->
+            <section class="treatments-table-section">
+                <h2>Treatment History</h2>
+                <div class="table-container">
+                    <table class="treatments-table">
+                        <thead>
+                            <tr>
+                                <th>Pet Name</th>
+                                <th>Treatment Type</th>
+                                <th>Date</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+                        <tbody id="treatmentsTableBody">
+                            <!-- Table rows will be added dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>

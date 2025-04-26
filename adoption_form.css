@@ -1,0 +1,99 @@
+/* adoption-form.css */
+body {
+    font-family: 'Inter', sans-serif;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar {
+    background-color: #fff;
+    padding: 1rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: auto;
+}
+
+.nav-links {
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    padding: 0;
+}
+
+.nav-links li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+}
+
+.nav-links li a.active {
+    color: #22c55e;
+}
+
+main {
+    margin-top: 4rem;
+    padding: 2rem;
+}
+
+.container {
+    max-width: 600px;
+    background: #fff;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 2rem;
+}
+
+.adoption-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.adoption-form label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: #555;
+}
+
+.adoption-form input,
+.adoption-form textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.adoption-form input:focus,
+.adoption-form textarea:focus {
+    border-color: #22c55e;
+    outline: none;
+}
+
+.submit-btn {
+    background-color: #22c55e;
+    color: white;
+    padding: 1rem;
+    width: 100%;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.submit-btn:hover {
+    background-color: #16a34a;
+}

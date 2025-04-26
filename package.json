@@ -1,15 +1,15 @@
 {
   "name": "shelter-inventory-system",
   "version": "1.0.0",
-  "description": "Shelter Inventory and Adoption System",
+  "description": "Shelter Inventory and Adoption System - Backend",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
   "dependencies": {
-    "express": "^4.18.2",
-    "mysql2": "^3.6.0",
+    "body-parser": "^1.20.2",
     "cors": "^2.8.5",
-    "body-parser": "^1.20.2"
+    "express": "^4.18.2",
+    "mysql2": "^3.4.0"
   }
-} 
+}
