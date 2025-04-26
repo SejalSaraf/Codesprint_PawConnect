@@ -215,3 +215,170 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Treatment data (in a real application, this would come from a database)
+let treatments = [
+    {
+        id: 1,
+        petName: "Buddy",
+        treatmentType: "Vaccination",
+        date: "2024-03-15",
+        notes: "Annual rabies vaccination"
+    },
+    {
+        id: 2,
+        petName: "Luna",
+        treatmentType: "Check-up",
+        date: "2024-03-10",
+        notes: "Regular health check, all good"
+    },
+    {
+        id: 3,
+        petName: "Max",
+        treatmentType: "Surgery",
+        date: "2024-03-05",
+        notes: "Neutering procedure completed successfully"
+    }
+];
+
+// Function to format date
+function formatDate(dateString) {
+    const options = { year: 'numeric', month: 'long', day: 'numeric' };
+    return new Date(dateString).toLocaleDateString(undefined, options);
+}
+
+// Function to filter and sort treatments
+function getFilteredAndSortedTreatments() {
+    const filterPet = document.getElementById('filterPet').value;
+    const filterType = document.getElementById('filterType').value;
+    const sortBy = document.getElementById('sortBy').value;
+
+    let filteredTreatments = treatments.filter(treatment => {
+        const petMatch = !filterPet || treatment.petName === filterPet;
+        const typeMatch = !filterType || treatment.treatmentType === filterType;
+        return petMatch && typeMatch;
+    });
+
+    // Sort treatments
+    filteredTreatments.sort((a, b) => {
+        switch (sortBy) {
+            case 'date-desc':
+                return new Date(b.date) - new Date(a.date);
+            case 'date-asc':
+                return new Date(a.date) - new Date(b.date);
+            case 'pet-asc':
+                return a.petName.localeCompare(b.petName);
+            case 'type-asc':
+                return a.treatmentType.localeCompare(b.treatmentType);
+            default:
+                return 0;
+        }
+    });
+
+    return filteredTreatments;
+}
+
+// Function to render treatments table
+function renderTreatmentsTable() {
+    const tableBody = document.getElementById('treatmentsTableBody');
+    if (!tableBody) return;
+
+    const filteredTreatments = getFilteredAndSortedTreatments();
+
+    tableBody.innerHTML = filteredTreatments.map(treatment => `
+        <tr>
+            <td>${treatment.petName}</td>
+            <td>${treatment.treatmentType}</td>
+            <td>${formatDate(treatment.date)}</td>
+            <td>${treatment.notes || '-'}</td>
+            <td>
+                <button class="action-btn view-btn" onclick="viewTreatment(${treatment.id})">View</button>
+                <button class="action-btn edit-btn" onclick="editTreatment(${treatment.id})">Edit</button>
+                <button class="action-btn delete-btn" onclick="deleteTreatment(${treatment.id})">Delete</button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Function to add new treatment
+function addTreatment(treatment) {
+    treatment.id = treatments.length + 1;
+    treatments.unshift(treatment);
+    renderTreatmentsTable();
+}
+
+// Function to view treatment details
+function viewTreatment(id) {
+    const treatment = treatments.find(t => t.id === id);
+    if (!treatment) return;
+
+    // In a real application, this would open a modal or navigate to a detail page
+    alert(`Treatment Details:\nPet: ${treatment.petName}\nType: ${treatment.treatmentType}\nDate: ${formatDate(treatment.date)}\nNotes: ${treatment.notes || 'None'}`);
+}
+
+// Function to edit treatment
+function editTreatment(id) {
+    const treatment = treatments.find(t => t.id === id);
+    if (!treatment) return;
+
+    // In a real application, this would open an edit form
+    alert(`Edit treatment for ${treatment.petName}`);
+}
+
+// Function to delete treatment
+function deleteTreatment(id) {
+    if (confirm('Are you sure you want to delete this treatment record?')) {
+        treatments = treatments.filter(t => t.id !== id);
+        renderTreatmentsTable();
+    }
+}
+
+// Handle form submission
+document.addEventListener('DOMContentLoaded', () => {
+    const treatmentForm = document.getElementById('treatmentForm');
+    const filterPet = document.getElementById('filterPet');
+    const filterType = document.getElementById('filterType');
+    const sortBy = document.getElementById('sortBy');
+    const resetFilters = document.getElementById('resetFilters');
+    
+    if (treatmentForm) {
+        treatmentForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(treatmentForm);
+            const newTreatment = {
+                petName: formData.get('petName'),
+                treatmentType: formData.get('treatmentType'),
+                date: formData.get('treatmentDate'),
+                notes: formData.get('notes')
+            };
+            
+            addTreatment(newTreatment);
+            treatmentForm.reset();
+        });
+    }
+
+    // Add event listeners for filters
+    if (filterPet) {
+        filterPet.addEventListener('change', renderTreatmentsTable);
+    }
+    if (filterType) {
+        filterType.addEventListener('change', renderTreatmentsTable);
+    }
+    if (sortBy) {
+        sortBy.addEventListener('change', renderTreatmentsTable);
+    }
+    if (resetFilters) {
+        resetFilters.addEventListener('click', () => {
+            filterPet.value = '';
+            filterType.value = '';
+            sortBy.value = 'date-desc';
+            renderTreatmentsTable();
+        });
+    }
+
+    // Initial render of treatments table
+    renderTreatmentsTable();
+});
+
+// Keep existing modal functionality below

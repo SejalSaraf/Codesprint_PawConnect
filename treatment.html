@@ -11,10 +11,9 @@
     <nav class="navbar">
         <div class="nav-container">
             <ul class="nav-links">
-                <li><a href="/">Home</a></li>
-                <li><a href="/pets">Pets</a></li>
-                <li><a href="/adoptions">Adoptions</a></li>
-                <li><a href="/treatments" class="active">Treatments</a></li>
+                <li><a href="pets.html">Home</a></li>
+                <li><a href="adoption.html">Adoptions</a></li>
+                <li><a href="treatment.html" class="active">Treatments</a></li>
                 <li><a href="/about">About</a></li>
             </ul>
         </div>
@@ -67,6 +66,49 @@
                 </form>
             </section>
 
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <h2>Filter Treatments</h2>
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="filterPet">Filter by Pet</label>
+                        <select id="filterPet">
+                            <option value="">All Pets</option>
+                            <option value="Buddy">Buddy</option>
+                            <option value="Luna">Luna</option>
+                            <option value="Max">Max</option>
+                            <option value="Bella">Bella</option>
+                            <option value="Charlie">Charlie</option>
+                            <option value="Daisy">Daisy</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="filterType">Filter by Type</label>
+                        <select id="filterType">
+                            <option value="">All Types</option>
+                            <option value="Vaccination">Vaccination</option>
+                            <option value="Surgery">Surgery</option>
+                            <option value="Deworming">Deworming</option>
+                            <option value="Check-up">Check-up</option>
+                            <option value="Medication">Medication</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label for="sortBy">Sort By</label>
+                        <select id="sortBy">
+                            <option value="date-desc">Date (Newest First)</option>
+                            <option value="date-asc">Date (Oldest First)</option>
+                            <option value="pet-asc">Pet Name (A-Z)</option>
+                            <option value="type-asc">Treatment Type (A-Z)</option>
+                        </select>
+                    </div>
+
+                    <button id="resetFilters" class="reset-btn">Reset Filters</button>
+                </div>
+            </section>
+
             <!-- Treatments Table -->
             <section class="treatments-table-section">
                 <h2>Treatment History</h2>
@@ -78,6 +120,7 @@
                                 <th>Treatment Type</th>
                                 <th>Date</th>
                                 <th>Notes</th>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody id="treatmentsTableBody">
