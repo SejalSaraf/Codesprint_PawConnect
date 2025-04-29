@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events & Vaccination Scheduling - Shelter Management</title>
+    <link rel="stylesheet" href="events.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Events & Vaccination Scheduling</h1>
+            <nav>
+                <ul>
+                    <li><a href="#" class="active" data-tab="events">Events</a></li>
+                    <li><a href="#" data-tab="vaccinations">Vaccinations</a></li>
+                    <li><a href="#" data-tab="notifications">Notifications</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <!-- Events Section -->
+            <section id="events" class="tab-content active">
+                <div class="section-header">
+                    <h2>Upcoming Events</h2>
+                    <button id="addEventBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Event</button>
+                </div>
+                <div class="calendar-container">
+                    <div id="calendar"></div>
+                </div>
+                <div class="events-list">
+                    <h3>Event Details</h3>
+                    <div id="eventsList"></div>
+                </div>
+            </section>
+
+            <!-- Vaccinations Section -->
+            <section id="vaccinations" class="tab-content">
+                <div class="section-header">
+                    <h2>Vaccination Schedule</h2>
+                    <button id="addVaccinationBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Vaccination</button>
+                </div>
+                <div class="vaccination-list">
+                    <div id="vaccinationList"></div>
+                </div>
+            </section>
+
+            <!-- Notifications Section -->
+            <section id="notifications" class="tab-content">
+                <div class="section-header">
+                    <h2>Notifications</h2>
+                    <button id="sendNotificationBtn" class="btn-primary"><i class="fas fa-bell"></i> Send Notification</button>
+                </div>
+                <div class="notifications-list">
+                    <div id="notificationsList"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Event Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add New Event</h2>
+            <form id="eventForm">
+                <div class="form-group">
+                    <label for="eventTitle">Event Title</label>
+                    <input type="text" id="eventTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDate">Date</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventTime">Time</label>
+                    <input type="time" id="eventTime" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventLocation">Location</label>
+                    <input type="text" id="eventLocation" required>
+                </div>
+                <div class="form-group">
+                    <label for="eventDescription">Description</label>
+                    <textarea id="eventDescription" required></textarea>
+                </div>
+                <button type="submit" class="btn-primary">Save Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Vaccination Modal -->
+    <div id="vaccinationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Vaccination Schedule</h2>
+            <form id="vaccinationForm">
+                <div class="form-group">
+                    <label for="petName">Pet Name</label>
+                    <input type="text" id="petName" required>
+                </div>
+                <div class="form-group">
+                    <label for="vaccineType">Vaccine Type</label>
+                    <select id="vaccineType" required>
+                        <option value="rabies">Rabies</option>
+                        <option value="dhpp">DHPP</option>
+                        <option value="bordetella">Bordetella</option>
+                        <option value="feline">Feline Vaccines</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="vaccinationDate">Date</label>
+                    <input type="date" id="vaccinationDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="nextDueDate">Next Due Date</label>
+                    <input type="date" id="nextDueDate" required>
+                </div>
+                <button type="submit" class="btn-primary">Save Schedule</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Modal -->
+    <div id="notificationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Send Notification</h2>
+            <form id="notificationForm">
+                <div class="form-group">
+                    <label for="notificationType">Notification Type</label>
+                    <select id="notificationType" required>
+                        <option value="event">Event Reminder</option>
+                        <option value="vaccination">Vaccination Due</option>
+                        <option value="general">General Announcement</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="notificationTitle">Title</label>
+                    <input type="text" id="notificationTitle" required>
+                </div>
+                <div class="form-group">
+                    <label for="notificationMessage">Message</label>
+                    <textarea id="notificationMessage" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="notificationRecipients">Recipients</label>
+                    <select id="notificationRecipients" multiple required>
+                        <option value="staff">Staff</option>
+                        <option value="volunteers">Volunteers</option>
+                        <option value="adopters">Adopters</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn-primary">Send Notification</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
+    <script src="events.js"></script>
+</body>
+</html> 
