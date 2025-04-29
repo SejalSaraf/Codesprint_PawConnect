@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shelter Feedback System</title>
+    <link rel="stylesheet" href="feedback.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <h1 class="nav-logo"><i class="fas fa-paw"></i> Shelter Management</h1>
+            <ul class="nav-menu">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="inventory.html">Inventory</a></li>
+                <li><a href="feedback.html" class="active">Feedback</a></li>
+                <li><a href="dashboard.html">Dashboard</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="header">
+            <h1>Feedback System</h1>
+            <p>We value your thoughts and suggestions to improve our shelter services</p>
+            <div class="alert-container" id="alertContainer"></div>
+        </div>
+
+        <div class="content-grid">
+            <div class="form-container">
+                <h2>Submit Feedback</h2>
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label for="name">Your Name</label>
+                        <input type="text" id="name" placeholder="Enter your name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">Email Address (Optional)</label>
+                        <input type="email" id="email" placeholder="Enter your email">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="category">Category</label>
+                        <select id="category" required>
+                            <option value="">Select a category</option>
+                            <option value="general">General</option>
+                            <option value="services">Services</option>
+                            <option value="facilities">Facilities</option>
+                            <option value="staff">Staff</option>
+                            <option value="website">Website</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rating">Rating</label>
+                        <div class="rating-container">
+                            <div class="rating">
+                                <input type="radio" id="star5" name="rating" value="5" required>
+                                <label for="star5">★</label>
+                                <input type="radio" id="star4" name="rating" value="4">
+                                <label for="star4">★</label>
+                                <input type="radio" id="star3" name="rating" value="3">
+                                <label for="star3">★</label>
+                                <input type="radio" id="star2" name="rating" value="2">
+                                <label for="star2">★</label>
+                                <input type="radio" id="star1" name="rating" value="1">
+                                <label for="star1">★</label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message">Your Feedback</label>
+                        <textarea id="message" rows="5" placeholder="Please share your thoughts, suggestions, or concerns" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">Submit Feedback</button>
+                </form>
+            </div>
+
+            <div class="feedback-container">
+                <div class="feedback-header">
+                    <h2>Recent Feedback</h2>
+                    <div class="filter-container">
+                        <input type="text" id="searchFeedback" placeholder="Search feedback...">
+                        <select id="categoryFilter">
+                            <option value="">All Categories</option>
+                            <option value="general">General</option>
+                            <option value="services">Services</option>
+                            <option value="facilities">Facilities</option>
+                            <option value="staff">Staff</option>
+                            <option value="website">Website</option>
+                        </select>
+                        <select id="ratingFilter">
+                            <option value="">All Ratings</option>
+                            <option value="5">5 Stars</option>
+                            <option value="4">4 Stars</option>
+                            <option value="3">3 Stars</option>
+                            <option value="2">2 Stars</option>
+                            <option value="1">1 Star</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="feedback-list" id="feedbackList"></div>
+                
+                <div class="pagination">
+                    <button id="prevPage" class="btn">Previous</button>
+                    <span id="pageInfo">Page 1 of 1</span>
+                    <button id="nextPage" class="btn">Next</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
+                <p><i class="fas fa-envelope"></i> info@shelterinventory.com</p>
+                <p><i class="fas fa-map-marker-alt"></i> 123 Shelter Street, Animal City</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="inventory.html">Inventory</a></li>
+                    <li><a href="feedback.html">Feedback</a></li>
+                    <li><a href="dashboard.html">Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Shelter Inventory System. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="feedback.js"></script>
+</body>
+</html>
