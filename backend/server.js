@@ -22,6 +22,8 @@ db.connect((err) => {
 app.use(cors());
 app.use(express.json());
 
+// ------------------ PETS APIs ------------------
+
 app.post('/pets', (req, res) => {
     const { name, breed, age, description, availability_status } = req.body;
 
@@ -57,7 +59,6 @@ app.put('/pets/:id', (req, res) => {
     });
 });
 
-
 app.delete('/pets/:id', (req, res) => {
     const { id } = req.params;
 
@@ -71,17 +72,100 @@ app.delete('/pets/:id', (req, res) => {
     });
 });
 
-
-
 app.get('/pets', (req, res) => {
     db.query('SELECT * FROM pets', (err, results) => {
         if (err) {
-            console.error('Error fetching users:', err);
+            console.error('Error fetching pets:', err);
             return res.status(500).json({ message: 'Database error' });
         }
         res.json(results);
     });
 });
+
+// ------------------ ADOPTIONS API ------------------
+
+app.post('/adoptions', (req, res) => {
+    const { pet_id, adopter_name, adopter_contact } = req.body;
+
+    if (!pet_id || !adopter_name || !adopter_contact) {
+        return res.status(400).json({ message: 'Pet ID, adopter name, and contact are required' });
+    }
+
+    const insertAdoption = `
+        INSERT INTO adoption (pet_id, adopter_name, adopter_contact, status)
+        VALUES (?, ?, ?, 'Pending')
+    `;
+
+    db.query(insertAdoption, [pet_id, adopter_name, adopter_contact], (err, result) => {
+        if (err) {
+            console.error('Error inserting adoption:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        const updatePetStatus = `
+            UPDATE pets
+            SET availability_status = 'Adopted'
+            WHERE id = ?
+        `;
+
+        db.query(updatePetStatus, [pet_id], (err2, result2) => {
+            if (err2) {
+                console.error('Error updating pet status:', err2);
+                return res.status(500).json({ message: 'Database error' });
+            }
+
+            res.status(201).json({ message: 'Adoption recorded successfully and pet status updated.' });
+        });
+    });
+});
+
+// ------------------ MEDICAL RECORDS APIs ------------------
+
+app.post('/medical-records', (req, res) => {
+    const { pet_id, treatment_date, description, vet_name } = req.body;
+
+    if (!pet_id || !treatment_date || !description || !vet_name) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const sql = `
+        INSERT INTO medical_records (pet_id, treatment_date, description, vet_name)
+        VALUES (?, ?, ?, ?)
+    `;
+
+    db.query(sql, [pet_id, treatment_date, description, vet_name], (err, result) => {
+        if (err) {
+            console.error('Error inserting medical record:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        res.status(201).json({ message: 'Medical record added successfully', recordId: result.insertId });
+    });
+});
+
+app.put('/medical-records/:id', (req, res) => {
+    const { id } = req.params;
+    const { treatment_date, description, vet_name } = req.body;
+
+    if (!treatment_date || !description || !vet_name) {
+        return res.status(400).json({ message: 'All fields are required' });
+    }
+
+    const sql = `
+        UPDATE medical_records
+        SET treatment_date = ?, description = ?, vet_name = ?
+        WHERE id = ?
+    `;
+
+    db.query(sql, [treatment_date, description, vet_name, id], (err, result) => {
+        if (err) {
+            console.error('Error updating medical record:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        res.json({ message: 'Medical record updated successfully' });
+    });
+});
+
+// ------------------ SERVER START ------------------
 
 const PORT = 5000;
 app.listen(PORT, '127.0.0.1', () => {

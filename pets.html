@@ -8,6 +8,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
+
+    <!-- Navigation Bar -->
     <nav class="navbar">
         <div class="nav-container">
             <ul class="nav-links">
@@ -20,6 +22,7 @@
     </nav>
 
     <main>
+        <!-- Hero Section -->
         <div class="container">
             <div class="content-wrapper">
                 <!-- Left Section -->
@@ -33,80 +36,103 @@
                 <!-- Right Section -->
                 <div class="image-section">
                     <div class="image-container">
-                        <img src="images\cat.jpg" alt="">
+                        <img src="images/cat.jpg" alt="">
                     </div>
                 </div>
             </div>
         </div>
 
-            <!-- Pets for Adoption Section -->
+        <!-- Pets for Adoption Section -->
         <section class="pets-section">
             <div class="container">
                 <h2 class="section-title">Pets for Adoption</h2>
                 <div class="pets-grid">
                     <div class="pet-card">
                         <div class="pet-image">
-                            <img src="images\dog1.jpeg" alt="Buddy the Dog">
+                            <img src="images/dog1.jpeg" alt="Buddy the Dog">
                         </div>
                         <h3>Buddy</h3>
                     </div>
                     <div class="pet-card">
                         <div class="pet-image">
-                            <img src="images\dog2.jpeg" alt="Luna the Dog">
+                            <img src="images/dog2.jpeg" alt="Luna the Dog">
                         </div>
                         <h3>Luna</h3>
                     </div>
                     <div class="pet-card">
                         <div class="pet-image">
-                            <img src="images\cat1.jpeg" alt="Max the cat">
+                            <img src="images/cat1.jpeg" alt="Max the Cat">
                         </div>
                         <h3>Max</h3>
                     </div>
                     <div class="pet-card">
                         <div class="pet-image">
-                            <img src="images\cat2.jpeg" alt="Bella the Cat">
+                            <img src="images/cat2.jpeg" alt="Bella the Cat">
                         </div>
                         <h3>Bella</h3>
                     </div>
                     <div class="pet-card">
                         <div class="pet-image">
-                            <img src="images\cat3.jpeg" alt="Charlie the cat">
+                            <img src="images/cat3.jpeg" alt="Charlie the Cat">
                         </div>
                         <h3>Charlie</h3>
                     </div>
                 </div>
+
                 <div class="view-more-container">
                     <a href="adoption.html" class="view-more-button">View More</a>
                 </div>
             </div>
-    
+        </section>
 
-            <!-- Get Involved Section -->
-            <section class="get-involved-section">
+        <!-- Get Involved Section -->
+        <section class="get-involved-section">
+            <div class="container">
                 <h2 class="section-title">Get Involved</h2>
                 <h3 class="section-subtitle">Register to Adopt or Suggest a Donation</h3>
                 <p class="section-description">Help us by finding loving homes for pets or suggesting animals in need of care. Your support saves lives!</p>
                 <div class="involvement-buttons">
-                    <button class="primary-btn">Register to Adopt</button>
+                    <button id="openAdoptionModal" class="primary-btn">Register to Adopt</button>
                     <button class="secondary-btn">Suggest a Donation</button>
                 </div>
-            </section>
+            </div>
+        </section>
+
+        <!-- Adoption Modal -->
+        <div id="adoptionModal" class="modal hidden">
+            <div class="modal-content">
+                <span id="closeModal" class="close-btn">&times;</span>
+                <h1 class="form-title">Apply for Adoption</h1>
+                <form class="adoption-form" id="adoptionForm">
+                    <div class="form-group">
+                        <label for="adopterName">Full Name</label>
+                        <input type="text" id="adopterName" name="adopterName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adopterEmail">Email</label>
+                        <input type="email" id="adopterEmail" name="adopterEmail" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adopterPhone">Phone Number</label>
+                        <input type="tel" id="adopterPhone" name="adopterPhone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="adopterAddress">Address</label>
+                        <textarea id="adopterAddress" name="adopterAddress" rows="4" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="preferredPet">Preferred Pet Name (Optional)</label>
+                        <input type="text" id="preferredPet" name="preferredPet">
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Application</button>
+                </form>
+            </div>
         </div>
+
     </main>
 
+    <!-- JavaScript -->
     <script src="script.js"></script>
-</body>
-</html>
 
-
-
-
-
-
-                
-
-        
-
-    <script src="script.js"></script>
 </body>
 </html>
