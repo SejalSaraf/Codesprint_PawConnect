@@ -8,6 +8,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const port = 3000;
+const JWT_SECRET = 'your-secret-key';
 
 // Middleware
 app.use(cors());
@@ -18,23 +19,19 @@ app.use(express.static('public'));
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '', // Add your MySQL password here
-    database: 'pet_shelter_system'
+    password: '', // your MySQL password
+    database: 'petAdpt'
 });
 
-// Connect to database
 db.connect((err) => {
     if (err) {
-        console.error('Error connecting to MySQL:', err);
+        console.error('❌ Error connecting to MySQL:', err);
         return;
     }
-    console.log('Connected to MySQL database');
+    console.log('✅ Connected to MySQL database');
 });
 
-// JWT Secret
-const JWT_SECRET = 'your-secret-key';
-
-// Authentication Middleware
+// Auth Middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
@@ -48,16 +45,18 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// Module 1: Pet Management & Adoptions
-// Pet CRUD operations
+// ---------- MODULE 1: PETS & ADOPTIONS ----------
+
+// Get all pets
 app.get('/api/pets', (req, res) => {
-    const query = 'SELECT * FROM pets ORDER BY created_at DESC';
+    const query = 'SELECT * FROM pets ORDER BY id DESC';
     db.query(query, (err, results) => {
         if (err) return res.status(500).json({ error: 'Error fetching pets' });
         res.json(results);
     });
 });
 
+// Add a new pet
 app.post('/api/pets', authenticateToken, (req, res) => {
     const { name, species, breed, age, gender, status, description, image_url } = req.body;
     const query = 'INSERT INTO pets (name, species, breed, age, gender, status, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
@@ -67,17 +66,36 @@ app.post('/api/pets', authenticateToken, (req, res) => {
     });
 });
 
-// Adoption process
-app.post('/api/adoptions', (req, res) => {
-    const { pet_id, adopter_name, adopter_email, adopter_phone, address } = req.body;
-    const query = 'INSERT INTO adoptions (pet_id, adopter_name, adopter_email, adopter_phone, address) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [pet_id, adopter_name, adopter_email, adopter_phone, address], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error processing adoption' });
-        res.status(201).json({ id: result.insertId, message: 'Adoption request submitted' });
+// Submit adoption
+app.post('/adoptions', (req, res) => {
+    const { pet_id, adopter_name, adopter_contact } = req.body;
+
+    if (!adopter_name || !adopter_contact) {
+        return res.status(400).json({ message: 'Adopter name and contact are required' });
+    }
+
+    const sql = `INSERT INTO adoption (pet_id, adopter_name, adopter_contact, status) VALUES (?, ?, ?, 'Pending')`;
+
+    db.query(sql, [pet_id || null, adopter_name, adopter_contact], (err, result) => {
+        if (err) {
+            console.error('Error inserting adoption:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        // Update pet status if pet_id was provided
+        if (pet_id) {
+            const updateStatus = `UPDATE pets SET status = 'Adopted' WHERE id = ?`;
+            db.query(updateStatus, [pet_id], (err2) => {
+                if (err2) console.error('Failed to update pet status:', err2);
+            });
+        }
+
+        res.status(201).json({ message: 'Adoption recorded', adoptionId: result.insertId });
     });
 });
 
-// Module 2: Donations & Funding Allocation
+// ---------- MODULE 2: DONATIONS ----------
+
 app.post('/api/donors', (req, res) => {
     const { name, email, phone, address } = req.body;
     const query = 'INSERT INTO donors (name, email, phone, address) VALUES (?, ?, ?, ?)';
@@ -96,7 +114,8 @@ app.post('/api/donations', (req, res) => {
     });
 });
 
-// Module 3: Events & Vaccination Scheduling
+// ---------- MODULE 3: EVENTS ----------
+
 app.get('/api/events', (req, res) => {
     const query = 'SELECT * FROM events ORDER BY event_date ASC';
     db.query(query, (err, results) => {
@@ -114,7 +133,8 @@ app.post('/api/events', authenticateToken, (req, res) => {
     });
 });
 
-// Module 4: Inventory & Feedback System
+// ---------- MODULE 4: INVENTORY & FEEDBACK ----------
+
 app.get('/api/inventory', authenticateToken, (req, res) => {
     const query = 'SELECT * FROM inventory ORDER BY item_name ASC';
     db.query(query, (err, results) => {
@@ -141,11 +161,12 @@ app.post('/api/feedback', (req, res) => {
     });
 });
 
-// Admin Authentication
+// ---------- ADMIN LOGIN ----------
+
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
     const query = 'SELECT * FROM admins WHERE username = ?';
-    
+
     db.query(query, [username], async (err, results) => {
         if (err) return res.status(500).json({ error: 'Error during login' });
         if (results.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
@@ -160,11 +181,12 @@ app.post('/api/admin/login', (req, res) => {
     });
 });
 
-// Serve frontend
+// ---------- FRONTEND ----------
+
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 app.listen(port, () => {
-    console.log(`Server running on http://localhost:${port}`);
-}); 
+    console.log(`🚀 Server running at http://localhost:${port}`);
+});

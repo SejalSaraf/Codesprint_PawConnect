@@ -4,6 +4,8 @@ const cors = require('cors');
 
 const app = express();
 
+// ------------------ DATABASE CONNECTION ------------------
+
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -13,16 +15,26 @@ const db = mysql.createConnection({
 
 db.connect((err) => {
     if (err) {
-        console.error('Database connection failed:', err);
+        console.error('❌ Database connection failed:', err);
         return;
     }
-    console.log('Connected to MySQL database');
+    console.log('✅ Connected to MySQL database');
 });
 
 app.use(cors());
 app.use(express.json());
 
 // ------------------ PETS APIs ------------------
+
+app.get('/pets', (req, res) => {
+    db.query('SELECT * FROM pets', (err, results) => {
+        if (err) {
+            console.error('Error fetching pets:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+        res.json(results);
+    });
+});
 
 app.post('/pets', (req, res) => {
     const { name, breed, age, description, availability_status } = req.body;
@@ -72,25 +84,20 @@ app.delete('/pets/:id', (req, res) => {
     });
 });
 
-app.get('/pets', (req, res) => {
-    db.query('SELECT * FROM pets', (err, results) => {
-        if (err) {
-            console.error('Error fetching pets:', err);
-            return res.status(500).json({ message: 'Database error' });
-        }
-        res.json(results);
-    });
-});
-
 // ------------------ ADOPTIONS API ------------------
 
 app.post('/adoptions', (req, res) => {
     const { pet_id, adopter_name, adopter_contact } = req.body;
 
+    console.log('📥 Incoming adoption request body:', req.body);
+
+    // Check required fields
     if (!pet_id || !adopter_name || !adopter_contact) {
+        console.warn('⚠️ Missing fields:', { pet_id, adopter_name, adopter_contact });
         return res.status(400).json({ message: 'Pet ID, adopter name, and contact are required' });
     }
 
+    // INSERT into adoption table
     const insertAdoption = `
         INSERT INTO adoption (pet_id, adopter_name, adopter_contact, status)
         VALUES (?, ?, ?, 'Pending')
@@ -98,24 +105,12 @@ app.post('/adoptions', (req, res) => {
 
     db.query(insertAdoption, [pet_id, adopter_name, adopter_contact], (err, result) => {
         if (err) {
-            console.error('Error inserting adoption:', err);
-            return res.status(500).json({ message: 'Database error' });
+            console.error('❌ MySQL INSERT error:', err);
+            return res.status(500).json({ message: 'Database error', sqlError: err.message });
         }
 
-        const updatePetStatus = `
-            UPDATE pets
-            SET availability_status = 'Adopted'
-            WHERE id = ?
-        `;
-
-        db.query(updatePetStatus, [pet_id], (err2, result2) => {
-            if (err2) {
-                console.error('Error updating pet status:', err2);
-                return res.status(500).json({ message: 'Database error' });
-            }
-
-            res.status(201).json({ message: 'Adoption recorded successfully and pet status updated.' });
-        });
+        console.log('✅ Adoption inserted. ID:', result.insertId);
+        res.status(201).json({ message: 'Adoption stored', adoptionId: result.insertId });
     });
 });
 
@@ -169,5 +164,5 @@ app.put('/medical-records/:id', (req, res) => {
 
 const PORT = 5000;
 app.listen(PORT, '127.0.0.1', () => {
-    console.log(`Server running at http://127.0.0.1:${PORT}`);
+    console.log(`🚀 Server running at http://127.0.0.1:${PORT}`);
 });

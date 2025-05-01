@@ -1,0 +1,13 @@
+CREATE DATABASE IF NOT EXISTS donation_system;
+USE donation_system;
+
+CREATE TABLE IF NOT EXISTS donations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) NOT NULL,
+    phone VARCHAR(20) NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    purpose VARCHAR(255) NOT NULL,
+    message TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+); 

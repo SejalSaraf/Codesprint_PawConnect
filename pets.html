@@ -11,14 +11,16 @@
 
     <!-- Navigation Bar -->
     <nav class="navbar">
-        <div class="nav-container">
-            <ul class="nav-links">
-                <li><a href="pets.html" class="active">Home</a></li>
-                <li><a href="adoption.html">Adoptions</a></li>
-                <li><a href="treatment.html">Treatments</a></li>
-                <li><a href="/about">About</a></li>
-            </ul>
+        <div class="logo">
+            <i class="fas fa-paw"></i>
+            <span>Shelter Inventory System</span>
         </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="pets.html" class="active">Pets</a></li>
+            <li><a href="donate.html">Donate</a></li>
+            <li><a href="allocation.html">Fund Allocation</a></li>
+        </ul>
     </nav>
 
     <main>
@@ -129,10 +131,13 @@
             </div>
         </div>
 
+        <div id="submissionMessage" class="toast-message hidden">
+            🎉 Application Submitted Successfully!
+          </div>
     </main>
 
     <!-- JavaScript -->
-    <script src="script.js"></script>
+    <script src="pets.js"></script>
 
 </body>
 </html>
