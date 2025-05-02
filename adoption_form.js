@@ -1,3 +1,5 @@
+console.log("🚀 adoption_form.js is running");
+
 document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('adoptionForm');
 
@@ -5,45 +7,41 @@ document.addEventListener('DOMContentLoaded', () => {
     e.preventDefault();
 
     const adopter_name = document.getElementById('adopterName').value.trim();
-    const adopter_contact = document.getElementById('adopterPhone').value.trim();
-    const preferredPet = document.getElementById('preferredPet').value.trim();
-
-    // Map preferred pet name to pet_id (optional)
-    let pet_id = null;
-    if (preferredPet) {
-      try {
-        const res = await fetch('http://localhost:5000/pets');
-        const pets = await res.json();
-        const pet = pets.find(p => p.name.toLowerCase() === preferredPet.toLowerCase());
-        if (pet) pet_id = pet.id;
-      } catch (err) {
-        console.error('Error fetching pets:', err);
-      }
-    }
+    const adopter_email = document.getElementById('adopterEmail').value.trim();
+    const adopter_phone = document.getElementById('adopterPhone').value.trim();
+    const adopter_address = document.getElementById('adopterAddress').value.trim();
+    const preferred_pet_name = document.getElementById('preferredPet').value.trim();
 
     const payload = {
       adopter_name,
-      adopter_contact,
-      pet_id
+      adopter_email,
+      adopter_phone,
+      adopter_address,
+      preferred_pet_name
     };
 
+    console.log("Submitting adoption form...");
+    console.log("Payload:", payload);
+
     try {
-      const response = await fetch('http://localhost:5000/adoptions', {
+      const res = await fetch('http://localhost:3000/api/adoption-form', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
       });
 
-      const result = await response.json();
-      if (response.ok) {
-        alert('🎉 Application submitted!');
+      const result = await res.json();
+      console.log("Server response:", result);
+
+      if (res.ok) {
+        alert('Application submitted successfully!');
         form.reset();
       } else {
-        alert(`❌ Submission failed: ${result.message}`);
+        alert('Error: ' + result.message);
       }
-    } catch (error) {
-      console.error('🚫 Error submitting form:', error);
-      alert('Server connection error.');
+    } catch (err) {
+      console.error('Fetch error:', err);
+      alert('Failed to submit form.');
     }
   });
 });

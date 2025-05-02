@@ -10,17 +10,16 @@ const app = express();
 const port = 3000;
 const JWT_SECRET = 'your-secret-key';
 
-// Middleware
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-// MySQL Connection
+// MySQL connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
-    password: '', // your MySQL password
-    database: 'petAdpt'
+    password: '',
+    database: 'donation_system'
 });
 
 db.connect((err) => {
@@ -31,11 +30,10 @@ db.connect((err) => {
     console.log('✅ Connected to MySQL database');
 });
 
-// Auth Middleware
+// JWT authentication middleware
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
     const token = authHeader && authHeader.split(' ')[1];
-
     if (!token) return res.status(401).json({ error: 'Access denied' });
 
     jwt.verify(token, JWT_SECRET, (err, user) => {
@@ -45,80 +43,103 @@ const authenticateToken = (req, res, next) => {
     });
 };
 
-// ---------- MODULE 1: PETS & ADOPTIONS ----------
+// -------- Adoption Form Submission Route --------
+app.post('/api/adoption_form', (req, res) => {
+    const { adopter_name, adopter_contact, pet_id } = req.body;
 
-// Get all pets
+    if (!adopter_name || !adopter_contact) {
+        return res.status(400).json({ message: 'Name and contact required' });
+    }
+
+    const sql = `
+        INSERT INTO adoption_form
+        (pet_id, adopter_name, adopter_contact, status)
+        VALUES (?, ?, ?, 'Pending')
+    `;
+
+    db.query(sql, [pet_id || null, adopter_name, adopter_contact], (err, result) => {
+        if (err) {
+            console.error('❌ Error inserting adoption form:', err);
+            return res.status(500).json({ message: 'Database error' });
+        }
+
+        res.status(201).json({ message: 'Application submitted', id: result.insertId });
+    });
+});
+
+// -------- Pet Management APIs --------
 app.get('/api/pets', (req, res) => {
-    const query = 'SELECT * FROM pets ORDER BY id DESC';
-    db.query(query, (err, results) => {
+    db.query('SELECT * FROM pets ORDER BY id DESC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error fetching pets' });
         res.json(results);
     });
 });
 
-// Add a new pet
 app.post('/api/pets', authenticateToken, (req, res) => {
     const { name, species, breed, age, gender, status, description, image_url } = req.body;
-    const query = 'INSERT INTO pets (name, species, breed, age, gender, status, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
-    db.query(query, [name, species, breed, age, gender, status, description, image_url], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error creating pet' });
-        res.status(201).json({ id: result.insertId, message: 'Pet created successfully' });
-    });
+    db.query(
+        'INSERT INTO pets (name, species, breed, age, gender, status, description, image_url) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+        [name, species, breed, age, gender, status, description, image_url],
+        (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error creating pet' });
+            res.status(201).json({ id: result.insertId, message: 'Pet created successfully' });
+        }
+    );
 });
 
-// Submit adoption
+// -------- Adoptions --------
 app.post('/adoptions', (req, res) => {
-    const { pet_id, adopter_name, adopter_contact } = req.body;
+    const { adopter_name, adopter_email, adopter_phone, adopter_address, preferred_pet_name } = req.body;
 
-    if (!adopter_name || !adopter_contact) {
-        return res.status(400).json({ message: 'Adopter name and contact are required' });
+    if (!adopter_name || !adopter_email || !adopter_phone || !adopter_address) {
+        return res.status(400).json({ message: 'All adopter details are required' });
     }
 
-    const sql = `INSERT INTO adoption (pet_id, adopter_name, adopter_contact, status) VALUES (?, ?, ?, 'Pending')`;
-
-    db.query(sql, [pet_id || null, adopter_name, adopter_contact], (err, result) => {
+    const sql = `
+        INSERT INTO adoption_applications 
+        (adopter_name, adopter_email, adopter_phone, adopter_address, preferred_pet_name) 
+        VALUES (?, ?, ?, ?, ?)
+    `;
+    db.query(sql, [adopter_name, adopter_email, adopter_phone, adopter_address, preferred_pet_name || null], (err, result) => {
         if (err) {
-            console.error('Error inserting adoption:', err);
+            console.error('Error inserting application:', err);
             return res.status(500).json({ message: 'Database error' });
         }
 
-        // Update pet status if pet_id was provided
-        if (pet_id) {
-            const updateStatus = `UPDATE pets SET status = 'Adopted' WHERE id = ?`;
-            db.query(updateStatus, [pet_id], (err2) => {
-                if (err2) console.error('Failed to update pet status:', err2);
-            });
-        }
-
-        res.status(201).json({ message: 'Adoption recorded', adoptionId: result.insertId });
+        res.status(201).json({ message: 'Adoption application submitted', applicationId: result.insertId });
     });
 });
 
-// ---------- MODULE 2: DONATIONS ----------
 
-app.post('/api/donors', (req, res) => {
-    const { name, email, phone, address } = req.body;
-    const query = 'INSERT INTO donors (name, email, phone, address) VALUES (?, ?, ?, ?)';
-    db.query(query, [name, email, phone, address], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error registering donor' });
-        res.status(201).json({ id: result.insertId, message: 'Donor registered successfully' });
+// -------- Donations --------
+
+app.post('/donate', (req, res) => {
+    const { name, email, phone, amount, purpose, message } = req.body;
+  
+    if (!name || !email || !phone || !amount || !purpose) {
+      return res.status(400).json({ message: 'Required fields missing' });
+    }
+  
+    const sql = `
+      INSERT INTO donations (name, email, phone, amount, purpose, message)
+      VALUES (?, ?, ?, ?, ?, ?)
+    `;
+  
+    db.query(sql, [name, email, phone, amount, purpose, message || null], (err, result) => {
+      if (err) {
+        console.error('❌ Error inserting donation:', err);
+        return res.status(500).json({ message: 'Database error' });
+      }
+  
+      res.status(201).json({ message: 'Donation recorded successfully', donationId: result.insertId });
     });
-});
+  });
+  
+  
 
-app.post('/api/donations', (req, res) => {
-    const { donor_id, amount, purpose, message } = req.body;
-    const query = 'INSERT INTO donations (donor_id, amount, purpose, message) VALUES (?, ?, ?, ?)';
-    db.query(query, [donor_id, amount, purpose, message], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error processing donation' });
-        res.status(201).json({ id: result.insertId, message: 'Donation processed successfully' });
-    });
-});
-
-// ---------- MODULE 3: EVENTS ----------
-
+// -------- Events --------
 app.get('/api/events', (req, res) => {
-    const query = 'SELECT * FROM events ORDER BY event_date ASC';
-    db.query(query, (err, results) => {
+    db.query('SELECT * FROM events ORDER BY event_date ASC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error fetching events' });
         res.json(results);
     });
@@ -126,18 +147,19 @@ app.get('/api/events', (req, res) => {
 
 app.post('/api/events', authenticateToken, (req, res) => {
     const { title, description, event_date, event_time, location, max_participants } = req.body;
-    const query = 'INSERT INTO events (title, description, event_date, event_time, location, max_participants) VALUES (?, ?, ?, ?, ?, ?)';
-    db.query(query, [title, description, event_date, event_time, location, max_participants], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error creating event' });
-        res.status(201).json({ id: result.insertId, message: 'Event created successfully' });
-    });
+    db.query(
+        'INSERT INTO events (title, description, event_date, event_time, location, max_participants) VALUES (?, ?, ?, ?, ?, ?)',
+        [title, description, event_date, event_time, location, max_participants],
+        (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error creating event' });
+            res.status(201).json({ id: result.insertId, message: 'Event created successfully' });
+        }
+    );
 });
 
-// ---------- MODULE 4: INVENTORY & FEEDBACK ----------
-
+// -------- Inventory --------
 app.get('/api/inventory', authenticateToken, (req, res) => {
-    const query = 'SELECT * FROM inventory ORDER BY item_name ASC';
-    db.query(query, (err, results) => {
+    db.query('SELECT * FROM inventory ORDER BY item_name ASC', (err, results) => {
         if (err) return res.status(500).json({ error: 'Error fetching inventory' });
         res.json(results);
     });
@@ -145,35 +167,38 @@ app.get('/api/inventory', authenticateToken, (req, res) => {
 
 app.post('/api/inventory', authenticateToken, (req, res) => {
     const { item_name, category, quantity, unit, min_quantity } = req.body;
-    const query = 'INSERT INTO inventory (item_name, category, quantity, unit, min_quantity) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [item_name, category, quantity, unit, min_quantity], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error adding inventory item' });
-        res.status(201).json({ id: result.insertId, message: 'Inventory item added successfully' });
-    });
+    db.query(
+        'INSERT INTO inventory (item_name, category, quantity, unit, min_quantity) VALUES (?, ?, ?, ?, ?)',
+        [item_name, category, quantity, unit, min_quantity],
+        (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error adding inventory item' });
+            res.status(201).json({ id: result.insertId, message: 'Inventory item added successfully' });
+        }
+    );
 });
 
+// -------- Feedback --------
 app.post('/api/feedback', (req, res) => {
     const { name, email, subject, message, rating } = req.body;
-    const query = 'INSERT INTO feedback (name, email, subject, message, rating) VALUES (?, ?, ?, ?, ?)';
-    db.query(query, [name, email, subject, message, rating], (err, result) => {
-        if (err) return res.status(500).json({ error: 'Error submitting feedback' });
-        res.status(201).json({ id: result.insertId, message: 'Feedback submitted successfully' });
-    });
+    db.query(
+        'INSERT INTO feedback (name, email, subject, message, rating) VALUES (?, ?, ?, ?, ?)',
+        [name, email, subject, message, rating],
+        (err, result) => {
+            if (err) return res.status(500).json({ error: 'Error submitting feedback' });
+            res.status(201).json({ id: result.insertId, message: 'Feedback submitted successfully' });
+        }
+    );
 });
 
-// ---------- ADMIN LOGIN ----------
-
+// -------- Admin Login --------
 app.post('/api/admin/login', (req, res) => {
     const { username, password } = req.body;
-    const query = 'SELECT * FROM admins WHERE username = ?';
-
-    db.query(query, [username], async (err, results) => {
+    db.query('SELECT * FROM admins WHERE username = ?', [username], async (err, results) => {
         if (err) return res.status(500).json({ error: 'Error during login' });
         if (results.length === 0) return res.status(401).json({ error: 'Invalid credentials' });
 
         const admin = results[0];
         const validPassword = await bcrypt.compare(password, admin.password);
-
         if (!validPassword) return res.status(401).json({ error: 'Invalid credentials' });
 
         const token = jwt.sign({ id: admin.id, role: admin.role }, JWT_SECRET);
@@ -181,12 +206,12 @@ app.post('/api/admin/login', (req, res) => {
     });
 });
 
-// ---------- FRONTEND ----------
-
+// -------- Serve Frontend --------
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
+// -------- Start Server --------
 app.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
 });
