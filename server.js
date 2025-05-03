@@ -135,27 +135,7 @@ app.post('/donate', (req, res) => {
     });
   });
   
-  
 
-// -------- Events --------
-app.get('/api/events', (req, res) => {
-    db.query('SELECT * FROM events ORDER BY event_date ASC', (err, results) => {
-        if (err) return res.status(500).json({ error: 'Error fetching events' });
-        res.json(results);
-    });
-});
-
-app.post('/api/events', authenticateToken, (req, res) => {
-    const { title, description, event_date, event_time, location, max_participants } = req.body;
-    db.query(
-        'INSERT INTO events (title, description, event_date, event_time, location, max_participants) VALUES (?, ?, ?, ?, ?, ?)',
-        [title, description, event_date, event_time, location, max_participants],
-        (err, result) => {
-            if (err) return res.status(500).json({ error: 'Error creating event' });
-            res.status(201).json({ id: result.insertId, message: 'Event created successfully' });
-        }
-    );
-});
 
 // -------- Inventory --------
 app.get('/api/inventory', authenticateToken, (req, res) => {
@@ -214,4 +194,138 @@ app.get('/', (req, res) => {
 // -------- Start Server --------
 app.listen(port, () => {
     console.log(`🚀 Server running at http://localhost:${port}`);
+});
+
+
+// -------- Events (modular) --------
+app.post('/events', async (req, res) => {
+    try {
+        const validationError = validators.validateEvent(req.body);
+        if (validationError) {
+            return res.status(400).json({ error: validationError });
+        }
+
+        const { title, date, time, location, description } = req.body;
+        const sql = `
+            INSERT INTO events (title, date, time, location, description)
+            VALUES (?, ?, ?, ?, ?)
+        `;
+        const result = await customDB.executeQuery(sql, [title, date, time, location, description]);
+
+        res.status(201).json({
+            message: 'Event created successfully',
+            eventId: result.insertId
+        });
+    } catch (error) {
+        console.error('Error creating event:', error);
+        res.status(500).json({ error: 'Failed to create event' });
+    }
+});
+
+app.get('/events', async (req, res) => {
+    try {
+        const sql = 'SELECT * FROM events ORDER BY date, time';
+        const events = await customDB.executeQuery(sql);
+        res.json(events);
+    } catch (error) {
+        console.error('Error fetching events:', error);
+        res.status(500).json({ error: 'Failed to fetch events' });
+    }
+});
+
+// -------- Vaccinations --------
+app.post('/vaccinations', async (req, res) => {
+    try {
+        const validationError = validators.validateVaccination(req.body);
+        if (validationError) {
+            return res.status(400).json({ error: validationError });
+        }
+
+        const { petName, vaccineType, vaccinationDate, nextDueDate } = req.body;
+        const sql = `
+            INSERT INTO vaccinations (pet_name, vaccine_type, vaccination_date, next_due_date)
+            VALUES (?, ?, ?, ?)
+        `;
+        const result = await customDB.executeQuery(sql, [petName, vaccineType, vaccinationDate, nextDueDate]);
+
+        res.status(201).json({
+            message: 'Vaccination scheduled successfully',
+            vaccinationId: result.insertId
+        });
+    } catch (error) {
+        console.error('Error scheduling vaccination:', error);
+        res.status(500).json({ error: 'Failed to schedule vaccination' });
+    }
+});
+
+app.get('/vaccinations', async (req, res) => {
+    try {
+        const sql = 'SELECT * FROM vaccinations ORDER BY vaccination_date';
+        const vaccinations = await customDB.executeQuery(sql);
+        res.json(vaccinations);
+    } catch (error) {
+        console.error('Error fetching vaccinations:', error);
+        res.status(500).json({ error: 'Failed to fetch vaccinations' });
+    }
+});
+
+// -------- Notifications --------
+app.post('/notifications', async (req, res) => {
+    const connection = await customDB.beginTransaction();
+    try {
+        const validationError = validators.validateNotification(req.body);
+        if (validationError) {
+            return res.status(400).json({ error: validationError });
+        }
+
+        const { type, title, message, recipients } = req.body;
+
+        const notificationSql = `
+            INSERT INTO notifications (type, title, message)
+            VALUES (?, ?, ?)
+        `;
+        const result = await connection.execute(notificationSql, [type, title, message]);
+        const notificationId = result[0].insertId;
+
+        const recipientSql = `
+            INSERT INTO notification_recipients (notification_id, recipient_type)
+            VALUES (?, ?)
+        `;
+        for (const recipient of recipients) {
+            await connection.execute(recipientSql, [notificationId, recipient]);
+        }
+
+        await customDB.commitTransaction(connection);
+
+        res.status(201).json({
+            message: 'Notification created successfully',
+            notificationId
+        });
+    } catch (error) {
+        await customDB.rollbackTransaction(connection);
+        console.error('Error creating notification:', error);
+        res.status(500).json({ error: 'Failed to create notification' });
+    }
+});
+
+app.get('/notifications', async (req, res) => {
+    try {
+        const sql = `
+            SELECT n.*, GROUP_CONCAT(nr.recipient_type) as recipients
+            FROM notifications n
+            LEFT JOIN notification_recipients nr ON n.id = nr.notification_id
+            GROUP BY n.id
+            ORDER BY n.created_at DESC
+        `;
+        const notifications = await customDB.executeQuery(sql);
+
+        notifications.forEach(notification => {
+            notification.recipients = notification.recipients ? notification.recipients.split(',') : [];
+        });
+
+        res.json(notifications);
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+        res.status(500).json({ error: 'Failed to fetch notifications' });
+    }
 });

@@ -70,30 +70,6 @@ CREATE TABLE IF NOT EXISTS fund_allocations (
     FOREIGN KEY (donation_id) REFERENCES donations(id)
 );
 
--- Module 3: Events & Vaccination Scheduling
-CREATE TABLE IF NOT EXISTS events (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    title VARCHAR(255) NOT NULL,
-    description TEXT,
-    event_date DATE NOT NULL,
-    event_time TIME NOT NULL,
-    location VARCHAR(255) NOT NULL,
-    max_participants INT,
-    current_participants INT DEFAULT 0,
-    status ENUM('Upcoming', 'Ongoing', 'Completed', 'Cancelled') DEFAULT 'Upcoming',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-
-CREATE TABLE IF NOT EXISTS vaccinations (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    pet_id INT,
-    vaccine_name VARCHAR(100) NOT NULL,
-    date_administered DATE,
-    next_due_date DATE,
-    status ENUM('Pending', 'Completed', 'Overdue') DEFAULT 'Pending',
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (pet_id) REFERENCES pets(id)
-);
 
 -- Module 4: Inventory & Feedback System
 CREATE TABLE IF NOT EXISTS inventory (

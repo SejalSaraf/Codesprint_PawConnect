@@ -3,58 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Events & Vaccination Scheduling - Shelter Management</title>
+    <title>Events & Vaccination Scheduling - PawConnect</title>
     <link rel="stylesheet" href="events.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Events & Vaccination Scheduling</h1>
-            <nav>
+        <header class="main-header">
+            <h1><i class="fas fa-calendar-alt"></i> Events & Vaccination</h1>
+            <nav class="main-nav">
                 <ul>
-                    <li><a href="#" class="active" data-tab="events">Events</a></li>
-                    <li><a href="#" data-tab="vaccinations">Vaccinations</a></li>
-                    <li><a href="#" data-tab="notifications">Notifications</a></li>
+                    <li><a href="#events" class="active"><i class="fas fa-calendar-check"></i> Events</a></li>
+                    <li><a href="#vaccinations"><i class="fas fa-syringe"></i> Vaccinations</a></li>
+                    <li><a href="#notifications"><i class="fas fa-bell"></i> Notifications</a></li>
                 </ul>
             </nav>
         </header>
 
         <main>
             <!-- Events Section -->
-            <section id="events" class="tab-content active">
+            <section id="events" class="content-section active">
                 <div class="section-header">
                     <h2>Upcoming Events</h2>
-                    <button id="addEventBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Event</button>
+                    <button class="add-btn" id="addEventBtn">
+                        <i class="fas fa-plus"></i> Add Event
+                    </button>
                 </div>
+                
                 <div class="calendar-container">
                     <div id="calendar"></div>
                 </div>
+
                 <div class="events-list">
                     <h3>Event Details</h3>
-                    <div id="eventsList"></div>
+                    <div class="event-cards" id="eventsList">
+                        <!-- Event cards will be dynamically added here -->
+                    </div>
                 </div>
             </section>
 
             <!-- Vaccinations Section -->
-            <section id="vaccinations" class="tab-content">
+            <section id="vaccinations" class="content-section">
                 <div class="section-header">
                     <h2>Vaccination Schedule</h2>
-                    <button id="addVaccinationBtn" class="btn-primary"><i class="fas fa-plus"></i> Add Vaccination</button>
+                    <button class="add-btn" id="addVaccinationBtn">
+                        <i class="fas fa-plus"></i> Add Vaccination
+                    </button>
                 </div>
-                <div class="vaccination-list">
-                    <div id="vaccinationList"></div>
+
+                <div class="vaccination-list" id="vaccinationList">
+                    <!-- Vaccination cards will be dynamically added here -->
                 </div>
             </section>
 
             <!-- Notifications Section -->
-            <section id="notifications" class="tab-content">
+            <section id="notifications" class="content-section">
                 <div class="section-header">
                     <h2>Notifications</h2>
-                    <button id="sendNotificationBtn" class="btn-primary"><i class="fas fa-bell"></i> Send Notification</button>
+                    <button class="add-btn" id="sendNotificationBtn">
+                        <i class="fas fa-bell"></i> Send Notification
+                    </button>
                 </div>
-                <div class="notifications-list">
-                    <div id="notificationsList"></div>
+
+                <div class="notifications-list" id="notificationsList">
+                    <!-- Notifications will be dynamically added here -->
                 </div>
             </section>
         </main>
@@ -65,7 +78,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add New Event</h2>
-            <form id="eventForm">
+            <form id="eventForm" class="form-container">
                 <div class="form-group">
                     <label for="eventTitle">Event Title</label>
                     <input type="text" id="eventTitle" required>
@@ -86,7 +99,7 @@
                     <label for="eventDescription">Description</label>
                     <textarea id="eventDescription" required></textarea>
                 </div>
-                <button type="submit" class="btn-primary">Save Event</button>
+                <button type="submit" class="submit-btn">Save Event</button>
             </form>
         </div>
     </div>
@@ -96,7 +109,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Add Vaccination Schedule</h2>
-            <form id="vaccinationForm">
+            <form id="vaccinationForm" class="form-container">
                 <div class="form-group">
                     <label for="petName">Pet Name</label>
                     <input type="text" id="petName" required>
@@ -118,7 +131,7 @@
                     <label for="nextDueDate">Next Due Date</label>
                     <input type="date" id="nextDueDate" required>
                 </div>
-                <button type="submit" class="btn-primary">Save Schedule</button>
+                <button type="submit" class="submit-btn">Save Schedule</button>
             </form>
         </div>
     </div>
@@ -128,7 +141,7 @@
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Send Notification</h2>
-            <form id="notificationForm">
+            <form id="notificationForm" class="form-container">
                 <div class="form-group">
                     <label for="notificationType">Notification Type</label>
                     <select id="notificationType" required>
@@ -153,7 +166,7 @@
                         <option value="adopters">Adopters</option>
                     </select>
                 </div>
-                <button type="submit" class="btn-primary">Send Notification</button>
+                <button type="submit" class="submit-btn">Send Notification</button>
             </form>
         </div>
     </div>
@@ -161,4 +174,4 @@
     <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.10.1/main.min.js"></script>
     <script src="events.js"></script>
 </body>
-</html> 
+</html>
