@@ -1,5 +1,5 @@
-## Streamlining Animal Shelter Operations
-
+# PawConnect
+### Streamlining Animal Shelter Operations
 PawConnect is a full-stack web application designed to help animal shelters manage their inventory, adoptions, donations, and event activities. It provides a centralized, user-friendly platform that simplifies shelter operations and improves the care and rehoming process for animals.
 
 ### Features
